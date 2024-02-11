@@ -1,0 +1,1 @@
+export { ranNum } from './ranNum';

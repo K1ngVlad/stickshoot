@@ -1,0 +1,13 @@
+.create {
+  height: calc(100% - 70px);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .title {
+    font-size: 30px;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+}
