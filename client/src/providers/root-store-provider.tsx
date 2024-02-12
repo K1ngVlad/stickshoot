@@ -1,7 +1,18 @@
 import { FC, ReactNode, createContext } from 'react';
 import { RootStore } from '../stores';
 
-const RootStoreContext = createContext<RootStore | null>(null);
+const RootStoreContext = createContext<RootStore>({
+  lobbyStore: {
+    lobby: null,
+    setLobby: () => {},
+  },
+  socketStore: {
+    socket: null,
+    setSocket: () => {},
+    loading: true,
+    setLoading: () => {},
+  },
+});
 
 interface Props {
   children: ReactNode;

@@ -80,6 +80,11 @@
         -webkit-box-shadow: 0px 2px 2px 0px var(--dark);
         -moz-box-shadow: 0px 2px 2px 0px var(--dark);
         box-shadow: 0px 2px 2px 0px var(--dark);
+
+        &::placeholder {
+          color: var(--verylight);
+          opacity: 0.6;
+        }
       }
     }
 
