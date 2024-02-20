@@ -37,6 +37,10 @@ export class SocketApi {
     this.socket.on('join-lobby', (lobby: Lobby): void => {
       joinLobbyEvent(lobby, setLoading, setLobby);
     });
+
+    this.socket.on('set-lobby', (lobby: Lobby): void => {
+      setLobby(lobby);
+    });
   }
 
   static emit(event: string, data: unknown): void {

@@ -1,9 +1,10 @@
 import { FC } from 'react';
+import { observer } from 'mobx-react-lite';
+
 import { PlayerItem } from './PlayerItem';
 import { useRootStore } from '../../hooks';
 
 import s from './PlayerList.module.scss';
-import { observer } from 'mobx-react-lite';
 
 const PlayersList: FC = observer(() => {
   const { lobby } = useRootStore().lobbyStore;

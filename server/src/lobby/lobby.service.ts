@@ -42,7 +42,7 @@ export class LobbyService {
     const lobby = await this.findLobbyByUrl(url);
 
     lobby.players = [...lobby.players, _id];
-    return lobby;
+    return await lobby.save();
   }
 
   async getLobbyDto(lobby: LobbyDocument): Promise<LobbyDto> {

@@ -1,10 +1,11 @@
-import { Socket } from 'socket.io';
+import { Socket, Server } from 'socket.io';
 import {
   ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
   SubscribeMessage,
   WebSocketGateway,
+  WebSocketServer,
 } from '@nestjs/websockets';
 import { CreateLobbyRequestDto, JoinLobbyRequestDto } from './dto';
 import { Injectable } from '@nestjs/common';
@@ -19,6 +20,8 @@ import { LobbyService } from 'src/lobby/lobby.service';
 export class ConnectGateway implements OnGatewayConnection {
   constructor(private lobbyService: LobbyService) {}
 
+  @WebSocketServer() server: Server;
+
   @SubscribeMessage('create-lobby')
   async handleCreateLobby(
     @ConnectedSocket() client: Socket,
@@ -30,7 +33,9 @@ export class ConnectGateway implements OnGatewayConnection {
     });
     const lobbyDto = await this.lobbyService.getLobbyDto(lobby);
 
-    client.join(lobbyDto.id);
+    const id = lobbyDto.id.toString();
+
+    client.join(id);
     client.emit('join-lobby', lobbyDto);
   }
 
@@ -45,8 +50,11 @@ export class ConnectGateway implements OnGatewayConnection {
     });
     const lobbyDto = await this.lobbyService.getLobbyDto(lobby);
 
-    client.join(lobbyDto.id);
+    const id = lobbyDto.id.toString();
+
+    client.join(id);
     client.emit('join-lobby', lobbyDto);
+    this.server.to(id).emit('set-lobby', lobbyDto);
   }
 
   handleConnection(client: Socket): void {

@@ -26,8 +26,27 @@
       align-items: center;
 
       .img {
-        width: 210px;
-        height: 210px;
+        width: 150px;
+        height: 150px;
+      }
+
+      .buttons {
+        margin-top: 20px;
+
+        .button {
+          background-color: var(--lighterwood);
+          color: var(--darker);
+          font-size: 22px;
+          padding: 10px;
+          font-weight: bold;
+          letter-spacing: 3px;
+          cursor: pointer;
+          transition-duration: 0.2s;
+
+          &:active {
+            transform: translateY(3px);
+          }
+        }
       }
     }
   }

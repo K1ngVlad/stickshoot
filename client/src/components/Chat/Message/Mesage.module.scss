@@ -1,0 +1,15 @@
+.text {
+  word-break: break-all;
+  color: var(--lighter);
+  letter-spacing: 1px;
+  line-height: 20px;
+
+  & + & {
+    margin-top: 5px;
+  }
+
+  .author {
+    margin-right: 5px;
+    font-weight: bold;
+  }
+}
