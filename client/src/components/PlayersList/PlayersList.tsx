@@ -11,7 +11,7 @@ const PlayersList: FC = observer(() => {
 
   if (!lobby) return <>Не удалось загрузить список пользователей</>;
 
-  const { players } = lobby;
+  const { players, leader } = lobby;
 
   return (
     <section className={s.playersListBox}>
@@ -22,6 +22,7 @@ const PlayersList: FC = observer(() => {
             key={player.id + player.connectId}
             avatar={player.avatar}
             name={player.name}
+            leader={leader === player.id}
           />
         ))}
       </div>

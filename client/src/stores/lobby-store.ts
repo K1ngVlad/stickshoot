@@ -8,7 +8,7 @@ class LobbyStore {
     makeAutoObservable(this);
   }
 
-  setLobby = (lobby: Lobby): void => {
+  setLobby = (lobby: Lobby | null): void => {
     this.lobby = lobby;
   };
 }

@@ -1,46 +1,77 @@
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 import { Socket, io } from 'socket.io-client';
+import { NavigateFunction } from 'react-router-dom';
 import { Lobby } from '../types';
-import {
-  connectEvent,
-  dissconnectEvent,
-  errorEvent,
-  joinLobbyEvent,
-} from './events';
+import { lobbyPath, mainPath } from '../routes';
 
 const API_URL = 'http://localhost:3000';
 
 export class SocketApi {
   static socket: null | Socket = null;
+  static navigate: null | NavigateFunction = null;
 
   static createConnection(
-    setSocket: (socket: Socket<DefaultEventsMap, DefaultEventsMap>) => void,
+    setSocket: (
+      socket: Socket<DefaultEventsMap, DefaultEventsMap> | null
+    ) => void,
     setLoading: (value: boolean) => void,
-    setLobby: (lobby: Lobby) => void
+    setLobby: (lobby: Lobby | null) => void,
+    openPopup: (text: string) => void
   ): void {
     setLoading(true);
     this.socket = io(API_URL);
+    // this.navigate = navigate;
     setSocket(this.socket);
 
     this.socket.on('connect', (): void => {
-      connectEvent(setLoading);
+      console.log('Websocket connected');
+      setLoading(false);
     });
 
     this.socket.on('disconnect', (): void => {
-      dissconnectEvent(setLoading);
+      console.log('Websocket dissConnected');
+      setLobby(null);
+      setLoading(false);
     });
 
-    this.socket.on('error', (): void => {
-      errorEvent(setLoading);
+    this.socket.on('error', (error): void => {
+      console.error(error);
+      openPopup('Произошла непредвиденная ошибка');
+      setLoading(false);
     });
 
     this.socket.on('join-lobby', (lobby: Lobby): void => {
-      joinLobbyEvent(lobby, setLoading, setLobby);
+      if (this.navigate) {
+        setLobby(lobby);
+        this.navigate(lobbyPath, { replace: true });
+        localStorage.setItem(
+          'userId',
+          lobby.players[lobby.players.length - 1].id
+        );
+        setLoading(false);
+      }
     });
 
     this.socket.on('set-lobby', (lobby: Lobby): void => {
       setLobby(lobby);
     });
+
+    this.socket.on('already-connected', (): void => {
+      openPopup('Вы ужа присоединились к лобби');
+      setLoading(false);
+    });
+
+    this.socket.on('lobby-does-not-exist', (): void => {
+      if (this.navigate) {
+        openPopup('Данного лобби не существует');
+        this.navigate(mainPath, { replace: true });
+        setLoading(false);
+      }
+    });
+  }
+
+  static setNavigate(navigate: NavigateFunction) {
+    this.navigate = navigate;
   }
 
   static emit(event: string, data: unknown): void {
@@ -50,22 +81,3 @@ export class SocketApi {
     this.socket.emit(event, data);
   }
 }
-
-// const onSubmitHandler = (
-//   event: FormEvent<HTMLFormElement>,
-//   data: CreatePlayer
-// ) => {
-//   event.preventDefault();
-
-//   const { setLoading } = rootStore.socketStore;
-
-//   setLoading(true);
-
-//   if (lobby) {
-//     SocketApi.emit('join-lobby', { ...data, url: lobby });
-//   } else {
-//     SocketApi.emit('create-lobby', data);
-//   }
-
-//   navigate(lobbyPath);
-// };

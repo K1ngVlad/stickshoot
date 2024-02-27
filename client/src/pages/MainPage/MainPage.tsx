@@ -18,7 +18,7 @@ const MainPage: FC = () => {
           Увлекательная онлайн игра, завоевавшая более 0 поклонников по всему
           миру!
         </p>
-        <Link to={joinPath} className={s.link}>
+        <Link to={joinPath} replace={true} className={s.link}>
           Создать комнату
         </Link>
       </section>

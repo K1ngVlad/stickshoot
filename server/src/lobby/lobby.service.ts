@@ -1,10 +1,11 @@
 import * as uuid from 'uuid';
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Lobby, LobbyDocument } from './schemas';
 import { CreateLobbyDto, JoinLobbyDto, LobbyDto } from './dto';
 import { PlayerService } from 'src/player/player.service';
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class LobbyService {
@@ -15,6 +16,47 @@ export class LobbyService {
 
   async findLobbyByUrl(url: string): Promise<LobbyDocument> {
     return await this.LobbyModel.findOne({ url });
+  }
+
+  async findLobbyByPlayer(id: mongoose.Types.ObjectId): Promise<LobbyDocument> {
+    const lobby = await this.LobbyModel.findOne({
+      players: id,
+    });
+
+    return lobby;
+  }
+
+  async findLobbyById(id: mongoose.Types.ObjectId): Promise<LobbyDocument> {
+    return await this.LobbyModel.findById(id);
+  }
+
+  async deleteLobbyById(id: mongoose.Types.ObjectId): Promise<LobbyDocument> {
+    return await this.LobbyModel.findOneAndDelete(id);
+  }
+
+  async deletePlayerFromLobby(
+    id: mongoose.Types.ObjectId,
+  ): Promise<LobbyDocument | null> {
+    const lobby = await this.findLobbyByPlayer(id);
+
+    if (!lobby) return null;
+
+    lobby.players = lobby.players.filter(
+      (player) => player.toString() !== id.toString(),
+    );
+
+    await lobby.save();
+
+    if (!lobby.players.length) {
+      return await this.deleteLobbyById(lobby._id);
+    }
+
+    if (lobby.leader.toString() === id.toString()) {
+      lobby.leader = lobby.players[0];
+      await lobby.save();
+    }
+
+    return lobby;
   }
 
   async createLobby(createLobbyDto: CreateLobbyDto): Promise<LobbyDocument> {
@@ -31,7 +73,13 @@ export class LobbyService {
   }
 
   async joinLobby(joinLobbyDto: JoinLobbyDto): Promise<LobbyDocument> {
-    const { name, avatar, connectId, url } = joinLobbyDto;
+    const { name, avatar, connectId, url, userId } = joinLobbyDto;
+
+    const lobby = await this.findLobbyByUrl(url);
+
+    if (!lobby) {
+      throw new WsException('This lobby does not exist');
+    }
 
     const { _id } = await this.playerService.createPlayer({
       name,
@@ -39,7 +87,9 @@ export class LobbyService {
       connectId,
     });
 
-    const lobby = await this.findLobbyByUrl(url);
+    if (lobby.players.map((player) => player.toString()).includes(userId)) {
+      throw new WsException('The player is already connected to this lobby');
+    }
 
     lobby.players = [...lobby.players, _id];
     return await lobby.save();

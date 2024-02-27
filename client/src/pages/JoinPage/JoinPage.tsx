@@ -1,7 +1,6 @@
 import { FC, FormEvent } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { SocketApi } from '../../api';
-import { lobbyPath } from '../../routes';
 import { PlayerForm } from '../../components';
 import { CreatePlayer } from '../../types';
 import s from './JoinPage.module.scss';
@@ -14,7 +13,6 @@ interface PlaceholderRef {
 const JoinPage: FC = () => {
   const rootStore = useRootStore();
   const { lobby } = useParams();
-  const navigate = useNavigate();
 
   if (!rootStore) return <></>;
 
@@ -29,20 +27,21 @@ const JoinPage: FC = () => {
 
     setLoading(true);
 
+    const { name, avatar, userId } = data;
+
     if (lobby) {
       SocketApi.emit('join-lobby', {
-        ...data,
-        name: data.name ? data.name : placeholderRef.current,
+        avatar,
+        name: name ? name : placeholderRef.current,
         url: lobby,
+        userId,
       });
     } else {
       SocketApi.emit('create-lobby', {
-        ...data,
-        name: data.name ? data.name : placeholderRef.current,
+        avatar,
+        name: name ? name : placeholderRef.current,
       });
     }
-
-    navigate(lobbyPath);
   };
 
   return (

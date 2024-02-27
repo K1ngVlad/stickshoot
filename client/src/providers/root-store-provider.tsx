@@ -12,6 +12,12 @@ const RootStoreContext = createContext<RootStore>({
     loading: true,
     setLoading: () => {},
   },
+  popupStore: {
+    active: false,
+    text: '',
+    openPopup: () => {},
+    closePopup: () => {},
+  },
 });
 
 interface Props {

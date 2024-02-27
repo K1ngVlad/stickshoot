@@ -24,6 +24,7 @@ const PlayerForm: FC<Props> = ({ onSubmitHandler }) => {
   const [data, setData] = useState<CreatePlayer>({
     name: '',
     avatar: avatars[numRef.current],
+    userId: localStorage.getItem('userId'),
   });
 
   const { name, avatar } = data;

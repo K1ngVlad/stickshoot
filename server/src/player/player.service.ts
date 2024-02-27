@@ -14,6 +14,10 @@ export class PlayerService {
     return await this.playerModel.create(createPlayerDto);
   }
 
+  async deletePlayerByConnectId(connectId: string): Promise<PlayerDocument> {
+    return await this.playerModel.findOneAndDelete({ connectId });
+  }
+
   getPlayerDto(player: PlayerDocument): PlayerDto {
     const { name, avatar, connectId, _id } = player;
     return { name, avatar, connectId, id: _id };
@@ -33,5 +37,9 @@ export class PlayerService {
     return await Promise.all(
       ids.map(async (id) => await this.getPlayerById(id)),
     );
+  }
+
+  async getPlayerByConnectId(connectId: string): Promise<PlayerDocument> {
+    return await this.playerModel.findOne({ connectId });
   }
 }

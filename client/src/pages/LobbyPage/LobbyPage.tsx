@@ -9,15 +9,37 @@ import { shotgunImg } from '../../assets';
 import s from './LobbyPage.module.scss';
 
 const LobbyPage: FC = observer(() => {
-  const { lobby } = useRootStore().lobbyStore;
+  const { lobbyStore, socketStore } = useRootStore();
+  const { lobby } = lobbyStore;
+  const { socket } = socketStore;
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log();
     if (!lobby) {
-      navigate(mainPath);
+      navigate(mainPath, { replace: true });
     }
-  }, [lobby, navigate]);
+
+    window.onbeforeunload = () => false;
+    window.onunload = () => {
+      if (socket) {
+        socket.emit('delete-player');
+      }
+    };
+
+    return () => {
+      window.onbeforeunload = () => true;
+      window.onunload = () => {};
+    };
+  }, [lobby, navigate, socket]);
+
+  const onExitHandler = () => {
+    window.onbeforeunload = () => true;
+    window.onunload = () => {};
+    if (socket) {
+      socket.emit('delete-player');
+    }
+    navigate(mainPath), { replace: true };
+  };
 
   return (
     <main className={s.lobby}>
@@ -28,7 +50,9 @@ const LobbyPage: FC = observer(() => {
           <CopyLink />
           <Chat />
           <div className={s.buttons}>
-            <button className={s.button}>Выйти</button>
+            <button onClick={onExitHandler} className={s.button}>
+              Выйти
+            </button>
             <button className={s.button}>Готов</button>
           </div>
         </div>

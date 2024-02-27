@@ -1,13 +1,15 @@
 import { FC } from 'react';
+import { crownImg } from '../../../assets';
 
 import s from './PlayerItem.module.scss';
 
 interface Props {
   name: string;
   avatar: string;
+  leader: boolean;
 }
 
-const PlayerItem: FC<Props> = ({ name, avatar }) => {
+const PlayerItem: FC<Props> = ({ name, avatar, leader }) => {
   return (
     <article className={s.PlayerItem}>
       <img
@@ -17,6 +19,12 @@ const PlayerItem: FC<Props> = ({ name, avatar }) => {
         src={avatar}
       />
       <span className={s.playerName}>{name}</span>
+
+      {leader && (
+        <div className={s.leader}>
+          <img alt="leader" src={crownImg} />
+        </div>
+      )}
     </article>
   );
 };

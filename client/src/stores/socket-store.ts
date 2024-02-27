@@ -13,7 +13,7 @@ class SocketStore {
     this.loading = value;
   };
 
-  setSocket = (socket: Socket): void => {
+  setSocket = (socket: Socket | null): void => {
     this.socket = socket;
   };
 }
