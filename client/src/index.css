@@ -3,9 +3,14 @@
 :root {
   --white: #ffffff;
   --wood: #63462d;
+  --darkwood: #442f1d;
+  --darkerwood: rgb(63, 41, 22);
+  --lightwood: #946841;
+  --lighterwood: #af8158;
   --light: #bd9a7a;
   --verylight: #e9d8c8;
   --dark: #352a25;
+  --darker: #20140e;
 }
 
 * {

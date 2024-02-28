@@ -1,13 +1,12 @@
 const placeholders: string[] = [
-  'Кот Дремот',
-  'Ruby Rose',
-  'Король Влад',
-  'Paranoid Cycle',
-  'Sayashi Kin',
-  'Dedok Monster',
-  'Witch Doctor',
-  'Zwie The Great',
-  'С ним играет только Кирилл',
+  'КотДремот',
+  'RubyRose',
+  'КорольВлад',
+  'ParanoidCycle',
+  'SayashiKin',
+  'DedokMonster',
+  'WitchDoctor',
+  'ZwieTheGreat',
 ];
 
 export { placeholders };

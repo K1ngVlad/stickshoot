@@ -1,5 +1,5 @@
 const mainPath = '/';
 const joinPath = '/join';
-const lobbyPath = './lobby';
+const lobbyPath = '/lobby';
 
 export { mainPath, joinPath, lobbyPath };

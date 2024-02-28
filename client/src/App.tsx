@@ -1,20 +1,21 @@
-import { Route, Routes } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import { routes } from './routes';
-import { useConnectSocket } from './hooks';
+import { useConnectSocket, useRootStore } from './hooks';
+import { Popup } from './components';
+import { PageRoutes } from './PageRoutes';
 
 const App = observer(() => {
   const { loading } = useConnectSocket();
+  const { active, text } = useRootStore().popupStore;
 
   return loading ? (
     <div>Загрузка</div>
   ) : (
     <>
-      <Routes>
-        {routes.map((route, i) => (
-          <Route key={i} {...route} />
-        ))}
-      </Routes>
+      <BrowserRouter>
+        <PageRoutes />
+      </BrowserRouter>
+      {active && <Popup text={text} />}
     </>
   );
 });

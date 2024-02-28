@@ -8,19 +8,23 @@ import { placeholders } from './constants';
 interface Props {
   onSubmitHandler: (
     event: FormEvent<HTMLFormElement>,
-    data: CreatePlayer
+    data: CreatePlayer,
+    placeholderRef: {
+      current: string;
+    }
   ) => void;
 }
 
 const PlayerForm: FC<Props> = ({ onSubmitHandler }) => {
   const numRef = useRef<number>(ranNum(avatars.length));
   const placeholderRef = useRef<string>(
-    placeholders[ranNum(placeholders.length)]
+    `${placeholders[ranNum(placeholders.length)]}${ranNum(999999)}`
   );
 
   const [data, setData] = useState<CreatePlayer>({
     name: '',
     avatar: avatars[numRef.current],
+    userId: localStorage.getItem('userId'),
   });
 
   const { name, avatar } = data;
@@ -33,7 +37,10 @@ const PlayerForm: FC<Props> = ({ onSubmitHandler }) => {
   };
 
   return (
-    <form className={s.playerForm} onSubmit={(e) => onSubmitHandler(e, data)}>
+    <form
+      className={s.playerForm}
+      onSubmit={(e) => onSubmitHandler(e, data, placeholderRef)}
+    >
       <div className={s.left}>
         <div className={s.imgBox}>
           <img className={s.img} alt="avatar" src={avatar} />
@@ -54,7 +61,6 @@ const PlayerForm: FC<Props> = ({ onSubmitHandler }) => {
           <input
             className={s.nameInput}
             value={name}
-            required
             placeholder={placeholderRef.current}
             onChange={(e) =>
               setData((data) => ({ ...data, name: e.target.value }))
