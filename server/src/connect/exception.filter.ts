@@ -10,7 +10,7 @@ export class ExceptionsFilter extends BaseWsExceptionFilter {
     console.log(exception.message);
 
     switch (exception.message) {
-      case 'The player is already connected to this lobby':
+      case 'The player is already in the lobby':
         client.emit('already-connected');
         break;
       case 'This lobby does not exist':

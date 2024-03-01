@@ -40,13 +40,16 @@ const JoinPage: FC = () => {
       SocketApi.emit('create-lobby', {
         avatar,
         name: name ? name : placeholderRef.current,
+        userId,
       });
     }
   };
 
   return (
     <main className={s.create}>
-      <h2 className={s.title}>Создать игру</h2>
+      <h2 className={s.title}>
+        {lobby ? 'Присоединиться к лобби' : 'Создать лобби'}
+      </h2>
       <PlayerForm onSubmitHandler={onSubmitHandler} />
     </main>
   );

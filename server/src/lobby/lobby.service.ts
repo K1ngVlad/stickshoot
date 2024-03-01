@@ -60,7 +60,25 @@ export class LobbyService {
   }
 
   async createLobby(createLobbyDto: CreateLobbyDto): Promise<LobbyDocument> {
-    const { _id } = await this.playerService.createPlayer(createLobbyDto);
+    const { connectId, name, avatar, userId } = createLobbyDto;
+
+    if (userId) {
+      const players = await this.playerService.getPlayers();
+
+      const alreadyHas = players.find(
+        (player) => player._id.toString() === userId,
+      );
+
+      if (alreadyHas) {
+        throw new WsException('The player is already in the lobby');
+      }
+    }
+
+    const { _id } = await this.playerService.createPlayer({
+      connectId,
+      name,
+      avatar,
+    });
 
     const url = uuid.v4();
 
@@ -75,6 +93,18 @@ export class LobbyService {
   async joinLobby(joinLobbyDto: JoinLobbyDto): Promise<LobbyDocument> {
     const { name, avatar, connectId, url, userId } = joinLobbyDto;
 
+    if (userId) {
+      const players = await this.playerService.getPlayers();
+
+      const hasAlready = players.find(
+        (player) => player._id.toString() === userId,
+      );
+
+      if (hasAlready) {
+        throw new WsException('The player is already in the lobby');
+      }
+    }
+
     const lobby = await this.findLobbyByUrl(url);
 
     if (!lobby) {
@@ -87,9 +117,9 @@ export class LobbyService {
       connectId,
     });
 
-    if (lobby.players.map((player) => player.toString()).includes(userId)) {
-      throw new WsException('The player is already connected to this lobby');
-    }
+    // if (lobby.players.map((player) => player.toString()).includes(userId)) {
+    //   throw new WsException('The player is already connected to this lobby');
+    // }
 
     lobby.players = [...lobby.players, _id];
     return await lobby.save();

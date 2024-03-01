@@ -1,7 +1,7 @@
 interface CreatePlayer {
   name: string;
   avatar: string;
-  userId: string | null;
+  userId?: string | null;
 }
 
 interface Player {

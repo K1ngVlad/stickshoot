@@ -31,6 +31,10 @@ export class PlayerService {
     return await this.playerModel.findById(id);
   }
 
+  async getPlayers(): Promise<PlayerDocument[]> {
+    return await this.playerModel.find();
+  }
+
   async getPlayersById(
     ids: mongoose.Types.ObjectId[],
   ): Promise<PlayerDocument[]> {
