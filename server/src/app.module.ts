@@ -19,3 +19,5 @@ import { ConnectModule } from './connect/connect.module';
   providers: [AppService],
 })
 export class AppModule {}
+
+console.log(process.env.MONGODB_KEY);
