@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { LobbyModule } from './lobby/lobby.module';
 import { PlayerModule } from './player/player.module';
 import { ConnectModule } from './connect/connect.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ConnectModule } from './connect/connect.module';
     LobbyModule,
     PlayerModule,
     ConnectModule,
+    MessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
