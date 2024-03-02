@@ -3,6 +3,7 @@ import { Lobby } from '../types';
 
 class LobbyStore {
   lobby: null | Lobby = null;
+  playerId: null | string = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -10,6 +11,10 @@ class LobbyStore {
 
   setLobby = (lobby: Lobby | null): void => {
     this.lobby = lobby;
+  };
+
+  setPlayerId = (playerId: string): void => {
+    this.playerId = playerId;
   };
 }
 

@@ -19,7 +19,7 @@ const LobbyPage: FC = observer(() => {
       navigate(mainPath, { replace: true });
     }
 
-    window.onbeforeunload = () => false;
+    window.onbeforeunload = () => true;
     window.onunload = () => {
       if (socket) {
         socket.emit('delete-player');
@@ -27,13 +27,14 @@ const LobbyPage: FC = observer(() => {
     };
 
     return () => {
-      window.onbeforeunload = () => true;
+      console.log('алло');
+      window.onbeforeunload = () => {};
       window.onunload = () => {};
     };
   }, [lobby, navigate, socket]);
 
   const onExitHandler = () => {
-    window.onbeforeunload = () => true;
+    window.onbeforeunload = () => {};
     window.onunload = () => {};
     if (socket) {
       socket.emit('delete-player');

@@ -16,11 +16,11 @@ export class SocketApi {
     ) => void,
     setLoading: (value: boolean) => void,
     setLobby: (lobby: Lobby | null) => void,
+    setPlayerId: (playerId: string) => void,
     openPopup: (text: string) => void
   ): void {
     setLoading(true);
     this.socket = io(API_URL);
-    // this.navigate = navigate;
     setSocket(this.socket);
 
     this.socket.on('connect', (): void => {
@@ -41,13 +41,12 @@ export class SocketApi {
     });
 
     this.socket.on('join-lobby', (lobby: Lobby): void => {
+      const playerId = lobby.players[lobby.players.length - 1].id;
       if (this.navigate) {
         setLobby(lobby);
         this.navigate(lobbyPath, { replace: true });
-        localStorage.setItem(
-          'userId',
-          lobby.players[lobby.players.length - 1].id
-        );
+        setPlayerId(playerId);
+        localStorage.setItem('userId', playerId);
         setLoading(false);
       }
     });

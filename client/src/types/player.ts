@@ -1,3 +1,5 @@
+import { Message } from '.';
+
 interface CreatePlayer {
   name: string;
   avatar: string;
@@ -9,6 +11,7 @@ interface Player {
   name: string;
   avatar: string;
   id: string;
+  messages: Message[];
 }
 
 export type { Player, CreatePlayer };
