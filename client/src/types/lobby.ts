@@ -1,3 +1,4 @@
+import { Message } from '.';
 import { Player } from './player';
 
 interface Lobby {
@@ -6,6 +7,7 @@ interface Lobby {
   leader: string;
   url: string;
   id: string;
+  messages: Message[];
 }
 
 export type { Lobby };

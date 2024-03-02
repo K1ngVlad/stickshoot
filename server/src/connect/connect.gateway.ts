@@ -7,11 +7,16 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { CreateLobbyRequestDto, JoinLobbyRequestDto } from './dto';
 import { Injectable, UseFilters } from '@nestjs/common';
+import {
+  CreateLobbyRequestDto,
+  JoinLobbyRequestDto,
+  SendMessageRequestDto,
+} from './dto';
 import { LobbyService } from 'src/lobby/lobby.service';
 import { PlayerService } from 'src/player/player.service';
 import { ExceptionsFilter } from './exception.filter';
+import { MessagesService } from 'src/messages/messages.service';
 
 @WebSocketGateway({
   cors: {
@@ -24,6 +29,7 @@ export class ConnectGateway implements OnGatewayConnection {
   constructor(
     private lobbyService: LobbyService,
     private playerService: PlayerService,
+    private messageService: MessagesService,
   ) {}
 
   @WebSocketServer() server: Server;
@@ -72,9 +78,7 @@ export class ConnectGateway implements OnGatewayConnection {
     const player = await this.playerService.deletePlayerByConnectId(clientId);
 
     if (player) {
-      const { _id } = player;
-
-      const lobby = await this.lobbyService.deletePlayerFromLobby(_id);
+      const lobby = await this.lobbyService.deletePlayerFromLobby(player);
 
       if (lobby) {
         const lobbyDto = await this.lobbyService.getLobbyDto(lobby);
@@ -82,6 +86,31 @@ export class ConnectGateway implements OnGatewayConnection {
         this.server.to(lobbyId).emit('set-lobby', lobbyDto);
       }
     }
+  }
+
+  @SubscribeMessage('send-message')
+  async handleSendMessage(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() sendMessageRequestDto: SendMessageRequestDto,
+  ) {
+    const { id } = client;
+    console.log(sendMessageRequestDto);
+    const player = await this.playerService.getPlayerByConnectId(id);
+    const lobby = await this.lobbyService.findLobbyByPlayer(player._id);
+
+    const message = await this.messageService.createMessage(
+      sendMessageRequestDto,
+    );
+
+    await this.playerService.addMessageToPlayer(player, message);
+    const updateLobby = await this.lobbyService.addMessageToLobby(
+      lobby,
+      message,
+    );
+    const lobbyDto = await this.lobbyService.getLobbyDto(updateLobby);
+    const lobbyId = lobbyDto.id.toString();
+
+    this.server.to(lobbyId).emit('set-lobby', lobbyDto);
   }
 
   handleConnection(client: Socket): void {

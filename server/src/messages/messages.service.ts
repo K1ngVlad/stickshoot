@@ -13,18 +13,39 @@ export class MessagesService {
   async createMessage(
     createMessageDto: CreateMessageDto,
   ): Promise<MessageDocument> {
-    return await this.MessageModel.create(createMessageDto);
+    const message = await this.MessageModel.create(createMessageDto);
+    return message;
   }
 
-  //   async getMessageById(id: mongoose.Types.ObjectId) {
-  //     return await this.MessageModel
-  //   }
+  async getMessageById(id: mongoose.Types.ObjectId): Promise<MessageDocument> {
+    return await this.MessageModel.findById(id);
+  }
 
-  //   getMessageDto(message: MessageDocument): MessageDto {
-  //     const { name, text, _id } = message;
+  async getMessagesByIds(
+    ids: mongoose.Types.ObjectId[],
+  ): Promise<MessageDocument[]> {
+    return await Promise.all(ids.map((id) => this.getMessageById(id)));
+  }
 
-  //     return { name, text, id: _id };
-  //   }
+  getMessageDto(message: MessageDocument): MessageDto {
+    const { name, text, _id } = message;
 
-  //   getMessageDtos()
+    return { name, text, id: _id };
+  }
+
+  getMessagesDto(messages: MessageDocument[]): MessageDto[] {
+    return messages.map((message) => this.getMessageDto(message));
+  }
+
+  async deleteMessageById(
+    id: mongoose.Types.ObjectId,
+  ): Promise<MessageDocument> {
+    return await this.MessageModel.findByIdAndDelete(id);
+  }
+
+  async deleteMessagesByIds(
+    ids: mongoose.Types.ObjectId[],
+  ): Promise<MessageDocument[]> {
+    return Promise.all(ids.map((id) => this.deleteMessageById(id)));
+  }
 }

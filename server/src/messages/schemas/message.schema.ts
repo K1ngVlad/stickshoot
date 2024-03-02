@@ -7,6 +7,8 @@ export type MessageDocument = Message & Document;
 export class Message {
   @Prop()
   name: string;
+
+  @Prop()
   text: string;
 }
 

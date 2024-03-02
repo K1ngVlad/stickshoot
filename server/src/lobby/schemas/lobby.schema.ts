@@ -18,6 +18,9 @@ export class Lobby {
 
   @Prop()
   url: string;
+
+  @Prop()
+  messages: mongoose.Types.ObjectId[];
 }
 
 export const LobbySchema = SchemaFactory.createForClass(Lobby);
